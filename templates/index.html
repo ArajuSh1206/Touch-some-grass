@@ -1,12 +1,45 @@
-<html>
-  <head>
-    <title>Grass or No Grass?</title>
-  </head>
-  <body>
-    <h1>Grass or No Grass?</h1>
-    <form method="post" action="{{ url_for('upload') }}" enctype="multipart/form-data">
-      <input type="file" name="file1">
-      <input type="submit" value="Check Image">
-    </form>
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grass Classifier</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="main-container">
+    <header>
+      <h1>Grass Classifier</h1>
+      <p>Use your camera to identify grass in real-time</p>
+    </header>
+
+    <div class="content">
+      <div class="card webcam-section">
+        <h2>Camera View</h2>
+        <div class="webcam-container">
+          <video id="webcam" autoplay playsinline></video>
+          <canvas id="canvas" style="display: none;"></canvas>
+          <div class="webcam-controls">
+            <button type="button" id="capture-btn" class="btn">Capture & Identify</button>
+            <button type="button" id="switch-camera-btn" class="btn secondary">Switch Camera</button>
+          </div>
+        </div>
+        
+        <div id="webcam-result" class="result-container" style="display: none;">
+          <p id="prediction" class="result-text"></p>
+          <p id="message" class="result-message" style="font-weight: bold;"></p>
+        </div>        
+      </div>
+    </div>
+    
+    <footer>
+      <p>© 2025 Grass Classifier - Touch Some Grass</p>
+    </footer>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/webcam.js') }}"></script>
+</body>
 </html>
