@@ -1,16 +1,14 @@
 from flask import Flask, render_template, request, jsonify
 import os
 import random
+from io import BytesIO
+from PIL import Image
 from werkzeug.utils import secure_filename
 from keras_model_predict import predict_image
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'uploads'
-app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload size
-
-# Create upload folder if it doesn't exist
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 
 # Fun messages
 GRASS_MESSAGES = [
@@ -41,25 +39,22 @@ def predict():
         return jsonify({'error': 'No image data received'}), 400
 
     file = request.files['file']
-    
+
     try:
+        # Save uploaded file temporarily
         filename = secure_filename(file.filename or 'webcam.jpg')
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        filepath = os.path.join('uploads', filename)
         file.save(filepath)
 
-        prediction, confidence_value = predict_image(filepath)
-        confidence = f"{confidence_value:.2%}"
+        # Send the file path to the model
+        prediction, _ = predict_image(filepath)
 
         # Pick a fun message based on the prediction
-        if prediction.lower() == "grass":
-            message = random.choice(GRASS_MESSAGES)
-        else:
-            message = random.choice(NO_GRASS_MESSAGES)
+        message = random.choice(GRASS_MESSAGES if prediction.lower() == "grass" else NO_GRASS_MESSAGES)
 
         return jsonify({
             'prediction': prediction,
-            'confidence': confidence,
-            'message': message  # This is the new key for fun feedback
+            'message': message
         })
 
     except Exception as e:

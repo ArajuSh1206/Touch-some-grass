@@ -97,7 +97,6 @@ function captureAndSend() {
         <h3 class="result-title">Result:</h3>
         <div class="result ${isGrass ? '' : 'not-grass'}">
           <p class="prediction">${data.prediction}</p>
-          <p class="confidence">Confidence: ${data.confidence}</p>
           <p class="message" style="font-weight: bold; margin-top: 0.5rem;">${data.message}</p>
         </div>
       `;
