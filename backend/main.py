@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import random
 from PIL import Image, ImageOps
-from keras_model_predict import predict_image
+from backend.keras_model_predict import predict_image
 import os
 
 app = Flask(__name__)
