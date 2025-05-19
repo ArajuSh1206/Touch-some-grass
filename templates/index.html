@@ -1,45 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Grass Classifier</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
-  <div class="main-container">
-    <header>
-      <h1>Grass Classifier</h1>
-      <p>Use your camera to identify grass in real-time</p>
-    </header>
 
-    <div class="content">
-      <div class="card webcam-section">
-        <h2>Camera View</h2>
-        <div class="webcam-container">
-          <video id="webcam" autoplay playsinline></video>
-          <canvas id="canvas" style="display: none;"></canvas>
-          <div class="webcam-controls">
-            <button type="button" id="capture-btn" class="btn">Capture & Identify</button>
-            <button type="button" id="switch-camera-btn" class="btn secondary">Switch Camera</button>
-          </div>
-        </div>
-        
-        <div id="webcam-result" class="result-container" style="display: none;">
-          <p id="prediction" class="result-text"></p>
-          <p id="message" class="result-message" style="font-weight: bold;"></p>
-        </div>        
-      </div>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background: transparent;
+    }
+
+    .loading > div {
+      display: inline-block;
+      width: 1.5rem;
+      height: 1.5rem;
+      margin: 0 0.25rem;
+      border-radius: 50%;
+      background-color: #094620;
+      animation: bounce 0.6s infinite alternate;
+    }
+
+    .loading > div:nth-child(2) {
+      animation-delay: 0.3s;
+    }
+
+    @keyframes bounce {
+      to {
+        transform: translateY(-10px);
+        opacity: 0.6;
+      }
+    }
+
+    .error-message {
+      color: #f87171;
+      font-weight: bold;
+    }
+
+    #bubbles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="relative w-screen h-screen overflow-hidden">
+
+  <!-- Fullscreen video background -->
+  <video id="webcam" autoplay playsinline
+    class="absolute top-0 left-0 w-full h-full object-cover z-0">
+  </video>
+
+  <!-- Bubbles canvas -->
+  <canvas id="bubbles"></canvas>
+
+  <!-- Header -->
+  <div class="absolute top-0 left-0 w-full z-10 px-4 pt-6 text-center text-white drop-shadow-md">
+    <h1 class="text-4xl font-bold text-white">Grass Classifier</h1>
+    <p class="text-lg text-white">Use your camera to identify grass in real-time</p>
+  </div>
+
+  <!-- Controls and results -->
+  <div class="absolute bottom-0 left-0 w-full z-10 px-4 pb-6 flex flex-col items-center space-y-4 bg-black/40 backdrop-blur-sm pt-4">
+    <canvas id="canvas" class="hidden"></canvas>
+
+    <div class="flex gap-4 w-full max-w-md">
+      <button id="capture-btn" class="flex-1 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold shadow-md">
+        Capture & Identify
+      </button>
     </div>
-    
-    <footer>
-      <p>© 2025 Grass Classifier - Touch Some Grass</p>
+
+    <div id="webcam-result" class="w-full max-w-md rounded-xl p-4 text-center hidden bg-white bg-opacity-90 shadow-md">
+      <!-- Dynamic result will appear here -->
+    </div>
+
+    <footer class="text-sm text-white mt-2">
+      © 2025 Grass Classifier - Touch Some Grass
     </footer>
   </div>
 
+  <!-- Scripts -->
   <script src="{{ url_for('static', filename='js/webcam.js') }}"></script>
+  <script>
+    // Bubble animation
+    const canvas = document.getElementById('bubbles');
+    const ctx = canvas.getContext('2d');
+    let bubbles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Bubble {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = canvas.height + Math.random() * 100;
+        this.radius = Math.random() * 8 + 2;
+        this.speed = Math.random() * 1 + 0.5;
+        this.alpha = Math.random() * 0.4 + 0.3;
+      }
+      update() {
+        this.y -= this.speed;
+        if (this.y < -this.radius) {
+          this.y = canvas.height + this.radius;
+          this.x = Math.random() * canvas.width;
+        }
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+        ctx.fillStyle = `rgba(100, 255, 100, ${this.alpha})`;
+        ctx.fill();
+      }
+    }
+
+    function initBubbles(count = 60) {
+      bubbles = [];
+      for (let i = 0; i < count; i++) {
+        bubbles.push(new Bubble());
+      }
+    }
+
+    function animateBubbles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      bubbles.forEach(bubble => {
+        bubble.update();
+        bubble.draw();
+      });
+      requestAnimationFrame(animateBubbles);
+    }
+
+    initBubbles();
+    animateBubbles();
+  </script>
 </body>
 </html>

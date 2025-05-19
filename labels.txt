@@ -1,2 +1,2 @@
-grass
-no grass
+Grass
+Not Grass

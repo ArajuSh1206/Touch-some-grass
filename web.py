@@ -1,10 +1,8 @@
 from flask import Flask, render_template, request, jsonify
-import os
 import random
-from io import BytesIO
-from PIL import Image
-from werkzeug.utils import secure_filename
+from PIL import Image, ImageOps
 from keras_model_predict import predict_image
+import os
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload size
@@ -14,14 +12,14 @@ app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 GRASS_MESSAGES = [
     "Good job! It's grass!",
     "You've finally touched some grass!",
-    "Great job! I see you.",
+    "Great job! Looking green and clean.",
     "Looks green and clean – that's grass alright!"
 ]
 
 NO_GRASS_MESSAGES = [
     "Boo! That's not grass.",
-    "You can't fool me!",
-    "That's definitely not grass.",
+    "Not a grass.You can't fool me!",
+    "Nice try. That's definitely not grass.",
     "Try again – that ain't it!"
 ]
 
@@ -41,15 +39,14 @@ def predict():
     file = request.files['file']
 
     try:
-        # Save uploaded file temporarily
-        filename = secure_filename(file.filename or 'webcam.jpg')
-        filepath = os.path.join('uploads', filename)
-        file.save(filepath)
+        # Load image directly from memory
+        img = Image.open(file.stream)
+        img.load()
 
-        # Send the file path to the model
-        prediction, _ = predict_image(filepath)
+        # Predict using your model
+        prediction, _ = predict_image(img)
 
-        # Pick a fun message based on the prediction
+        # Choose a fun message
         message = random.choice(GRASS_MESSAGES if prediction.lower() == "grass" else NO_GRASS_MESSAGES)
 
         return jsonify({
@@ -64,11 +61,8 @@ def predict():
 if __name__ == '__main__':
     print("Starting Grass Classifier application...")
     try:
-        os.makedirs('static/js', exist_ok=True)
-
         if not os.path.exists('keras_model.h5'):
             print("Warning: keras_model.h5 not found.")
-
         if not os.path.exists('labels.txt'):
             print("Warning: labels.txt not found.")
 

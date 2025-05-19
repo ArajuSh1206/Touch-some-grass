@@ -2,8 +2,8 @@
 const video = document.getElementById('webcam');
 const canvas = document.getElementById('canvas');
 const captureBtn = document.getElementById('capture-btn');
-const switchCameraBtn = document.getElementById('switch-camera-btn');
 const webcamResult = document.getElementById('webcam-result');
+const bubblesContainer = document.getElementById('bubbles'); // Added for bubbles
 
 // Set up canvas
 const ctx = canvas.getContext('2d');
@@ -50,16 +50,10 @@ async function initWebcam(useBackCamera = false) {
   }
 }
 
-// Switch between front and back cameras
-function switchCamera() {
-  initWebcam(usingFrontCamera);
-}
-
 // Capture image and send for prediction
 function captureAndSend() {
   captureBtn.disabled = true;
   captureBtn.textContent = 'Analyzing...';
-  switchCameraBtn.disabled = true;
 
   webcamResult.style.display = 'block';
   webcamResult.innerHTML = `
@@ -112,14 +106,34 @@ function captureAndSend() {
     .finally(() => {
       captureBtn.disabled = false;
       captureBtn.textContent = 'Capture & Identify';
-      switchCameraBtn.disabled = false;
     });
   }, 'image/jpeg', 0.9);
 }
 
+// BUBBLE EFFECT CODE
+function createBubble() {
+  const bubble = document.createElement('div');
+  const size = Math.random() * 40 + 10; // 10px to 50px
+  bubble.classList.add('bubble');
+  bubble.style.width = `${size}px`;
+  bubble.style.height = `${size}px`;
+  bubble.style.left = `${Math.random() * 100}%`;
+  bubble.style.animationDuration = `${8 + Math.random() * 4}s`;
+  bubble.style.backgroundColor = `rgba(255, 255, 255, ${Math.random() * 0.2 + 0.05})`;
+
+  bubblesContainer.appendChild(bubble);
+
+  // Remove bubble after animation duration to keep DOM clean
+  setTimeout(() => {
+    bubble.remove();
+  }, 12000);
+}
+
+// Generate bubbles at intervals
+setInterval(createBubble, 500);
+
 // Attach events
 captureBtn.addEventListener('click', captureAndSend);
-switchCameraBtn.addEventListener('click', switchCamera);
 
 // Init on load
 document.addEventListener('DOMContentLoaded', () => {

@@ -3,7 +3,7 @@ from PIL import Image, ImageOps
 import numpy as np
 import os
 
-def predict_image(image_path):
+def predict_image(image):  # now accepts PIL Image directly
     # Use custom object scope to handle the incompatible 'groups' parameter
     from tensorflow.keras.models import load_model
     import tensorflow as tf
@@ -45,8 +45,9 @@ def predict_image(image_path):
     # Load class names
     class_names = open("labels.txt", "r").readlines()
     
-    # Process the image
-    image = Image.open(image_path).convert("RGB")
+    # Process the PIL Image directly
+    if image.mode != 'RGB':
+        image = image.convert("RGB")
     image = ImageOps.fit(image, (224, 224), Image.Resampling.LANCZOS)
     image_array = np.asarray(image).astype(np.float32)
     normalized = (image_array / 127.5) - 1
