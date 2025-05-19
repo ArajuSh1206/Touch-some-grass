@@ -1,0 +1,1 @@
+A fun browser based image classification app that uses a custom AI/ML model to detect grass in real time using camera. It is an interactive experience that uses Flask, HTML5, and TailwindCSS to create live video capture, bubble animations, and display encouraging messages.
