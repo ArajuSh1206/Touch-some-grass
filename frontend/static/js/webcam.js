@@ -67,7 +67,7 @@ function captureAndSend() {
     const formData = new FormData();
     formData.append('file', blob, 'webcam.jpg');
 
-    fetch('/predict', {
+    fetch('https://touch-some-grass-backend.onrender.com/predict', {
       method: 'POST',
       body: formData
     })
