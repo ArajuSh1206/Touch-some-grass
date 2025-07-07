@@ -1,10 +1,14 @@
 from flask import Flask, render_template, request, jsonify
 import random
 from PIL import Image, ImageOps
-from backend.keras_model_predict import predict_image
+from keras_model_predict import predict_image
 import os
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    template_folder=os.path.join(os.path.dirname(__file__), '../frontend/templates'),
+    static_folder=os.path.join(os.path.dirname(__file__), '../frontend/static')
+)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload size
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 
