@@ -70,6 +70,12 @@ if __name__ == '__main__':
         if not os.path.exists('labels.txt'):
             print("Warning: labels.txt not found.")
 
-        app.run(debug=True)
-    except Exception as e:
+        #Get port from environment variable (Render provides this)
+        port = int(os.environ.get('PORT', 5000))
+        
+        # Bind to 0.0.0.0 so Render can access it, disable debug for production
+        app.run(host='0.0.0.0', port=port, debug=False)    
+        
+        except Exception as e:
+
         print(f"Exception encountered: {str(e)}")
