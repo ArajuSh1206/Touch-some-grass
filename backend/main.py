@@ -76,6 +76,6 @@ if __name__ == '__main__':
         # Bind to 0.0.0.0 so Render can access it, disable debug for production
         app.run(host='0.0.0.0', port=port, debug=False)    
         
-        except Exception as e:
+    except Exception as e:
 
         print(f"Exception encountered: {str(e)}")
