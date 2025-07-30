@@ -3,6 +3,8 @@ import numpy as np
 import os
 import tensorflow as tf 
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 def predict_image(image):  # now accepts PIL Image directly
     def load_model_with_custom_objects():
         class CustomDepthwiseConv2D(tf.keras.layers.DepthwiseConv2D):
@@ -11,20 +13,20 @@ def predict_image(image):  # now accepts PIL Image directly
                 super(CustomDepthwiseConv2D, self).__init__(**kwargs)
 
         with tf.keras.utils.custom_object_scope({'DepthwiseConv2D': CustomDepthwiseConv2D}):
-            return tf.keras.models.load_model("keras_model.h5", compile=False)
+            return tf.keras.models.load_model(os.path.join(BASE_DIR, "keras_model.h5"), compile=False)
 
     try:
         model = load_model_with_custom_objects()
     except Exception as e:
         print(f"Failed to load model with custom handler: {e}")
         try:
-            model = tf.keras.models.load_model("keras_model.h5", compile=False)
+            model = tf.keras.models.load_model(os.path.join(BASE_DIR, "keras_model.h5"), compile=False)
         except Exception as e:
             print(f"Failed to load model with tf.keras: {e}")
             raise e
 
     # Load class names
-    class_names = open("labels.txt", "r").readlines()
+    class_names = open(os.path.join(BASE_DIR, "labels.txt"), "r").readlines()
 
     # Process the PIL Image directly
     if image.mode != 'RGB':
