@@ -1,6 +1,6 @@
 // DOM elements
 const video = document.getElementById('webcam');
-const canvas = document.getElementById('canvas');
+let canvas = document.getElementById('canvas');
 const captureBtn = document.getElementById('capture-btn');
 const webcamResult = document.getElementById('webcam-result');
 const bubblesContainer = document.getElementById('bubbles'); // Added for bubbles
@@ -67,10 +67,11 @@ function captureAndSend() {
     const formData = new FormData();
     formData.append('file', blob, 'webcam.jpg');
 
-    fetch('https://touch-some-grass-backend.onrender.com/predict', {
-      method: 'POST',
-      body: formData
+    fetch('http://localhost:5000/predict', {
+        method: 'POST',
+        body: formData
     })
+
     .then(response => {
       if (!response.ok) throw new Error('Server error');
       return response.json();

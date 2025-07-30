@@ -4,6 +4,8 @@ from PIL import Image, ImageOps
 from keras_model_predict import predict_image
 import os
 
+from flask_cors import CORS
+
 app = Flask(
     __name__,
     template_folder=os.path.join(os.path.dirname(__file__), '../frontend/templates'),
@@ -11,6 +13,8 @@ app = Flask(
 )
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload size
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
+
+CORS(app)
 
 # Fun messages
 GRASS_MESSAGES = [
@@ -43,12 +47,17 @@ def predict():
     file = request.files['file']
 
     try:
+        #Add file stream reset
+        file.stream.seek(0)
         # Load image directly from memory
         img = Image.open(file.stream)
         img.load()
 
         # Predict using your model
         prediction, _ = predict_image(img)
+
+        #clean up prediction results
+        prediction = prediction.strip()
 
         # Choose a fun message
         message = random.choice(GRASS_MESSAGES if prediction.lower() == "grass" else NO_GRASS_MESSAGES)

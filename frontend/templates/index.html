@@ -92,7 +92,7 @@
   <script src="{{ url_for('static', filename='js/webcam.js') }}"></script>
   <script>
     // Bubble animation
-    const canvas = document.getElementById('bubbles');
+    let canvas = document.getElementById('bubbles');
     const ctx = canvas.getContext('2d');
     let bubbles = [];
 
