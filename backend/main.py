@@ -8,7 +8,7 @@ from flask_cors import CORS
 
 app = Flask(
     __name__,
-    template_folder=os.path.join(os.path.dirname(__file__), '../frontend/templates'),
+    template_folder=os.path.join(os.path.dirname(__file__), '../frontend'),
     static_folder=os.path.join(os.path.dirname(__file__), '../frontend/static')
 )
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload size
