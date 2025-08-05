@@ -91,60 +91,60 @@
   <!-- Scripts -->
   <script src="/static/js/webcam.js"></script>
   <script>
-    // Bubble animation
-    let canvas = document.getElementById('bubbles');
-    const ctx = canvas.getContext('2d');
-    let bubbles = [];
+  // Bubble animation
+  let bubbleCanvas = document.getElementById('bubbles');
+  const ctx = bubbleCanvas.getContext('2d');
+  let bubbles = [];
 
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+  function resizeCanvas() {
+    bubbleCanvas.width = window.innerWidth;
+    bubbleCanvas.height = window.innerHeight;
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  class Bubble {
+    constructor() {
+      this.x = Math.random() * bubbleCanvas.width;
+      this.y = bubbleCanvas.height + Math.random() * 100;
+      this.radius = Math.random() * 8 + 2;
+      this.speed = Math.random() * 1 + 0.5;
+      this.alpha = Math.random() * 0.4 + 0.3;
     }
-
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    class Bubble {
-      constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = canvas.height + Math.random() * 100;
-        this.radius = Math.random() * 8 + 2;
-        this.speed = Math.random() * 1 + 0.5;
-        this.alpha = Math.random() * 0.4 + 0.3;
-      }
-      update() {
-        this.y -= this.speed;
-        if (this.y < -this.radius) {
-          this.y = canvas.height + this.radius;
-          this.x = Math.random() * canvas.width;
-        }
-      }
-      draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
-        ctx.fillStyle = `rgba(100, 255, 100, ${this.alpha})`;
-        ctx.fill();
+    update() {
+      this.y -= this.speed;
+      if (this.y < -this.radius) {
+        this.y = bubbleCanvas.height + this.radius;
+        this.x = Math.random() * bubbleCanvas.width;
       }
     }
-
-    function initBubbles(count = 60) {
-      bubbles = [];
-      for (let i = 0; i < count; i++) {
-        bubbles.push(new Bubble());
-      }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+      ctx.fillStyle = `rgba(100, 255, 100, ${this.alpha})`;
+      ctx.fill();
     }
+  }
 
-    function animateBubbles() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      bubbles.forEach(bubble => {
-        bubble.update();
-        bubble.draw();
-      });
-      requestAnimationFrame(animateBubbles);
+  function initBubbles(count = 60) {
+    bubbles = [];
+    for (let i = 0; i < count; i++) {
+      bubbles.push(new Bubble());
     }
+  }
 
-    initBubbles();
-    animateBubbles();
-  </script>
+  function animateBubbles() {
+    ctx.clearRect(0, 0, bubbleCanvas.width, bubbleCanvas.height);
+    bubbles.forEach(bubble => {
+      bubble.update();
+      bubble.draw();
+    });
+    requestAnimationFrame(animateBubbles);
+  }
+
+  initBubbles();
+  animateBubbles();
+</script>
 </body>
 </html>

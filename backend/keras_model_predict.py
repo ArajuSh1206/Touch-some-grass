@@ -37,7 +37,7 @@ def predict_image(image):
     print(f"Input shape: {data.shape}, dtype: {data.dtype}, min: {data.min()}, max: {data.max()}")
 
     try:
-        prediction = model.predict(data)
+        prediction = model(data, training=False)
     except Exception as e:
         print(f"Error during model prediction: {e}")
         raise
