@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: Touch Some Grass
+    name: touch-some-grass-backend
     env: python
     buildCommand: ""
     startCommand: gunicorn main:app
