@@ -139,5 +139,5 @@ captureBtn.addEventListener('click', captureAndSend);
 
 // Init on load
 document.addEventListener('DOMContentLoaded', () => {
-  initWebcam();
+  initWebcam(true);
 });
