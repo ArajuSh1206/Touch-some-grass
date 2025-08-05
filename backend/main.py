@@ -14,7 +14,7 @@ app = Flask(
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload size
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 
-CORS(app)
+CORS(app, origins=["https://touch-some-grass.vercel.app"])
 
 # Fun messages
 GRASS_MESSAGES = [
